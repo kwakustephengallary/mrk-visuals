@@ -143,6 +143,34 @@ app.patch('/api/galleries/:id', (req, res) => {
 
   res.json(gallery);
 });
+// Verify Paystack payment
+app.post('/api/verify-payment', async (req, res) => {
+  const { reference, galleryId } = req.body;
+  
+  try {
+    const response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
+      headers: {
+        Authorization: 'Bearer sk_live_96a1cfdf25904053711b4947c354d885af83b303', // REPLACE WITH YOUR SECRET KEY
+      },
+    });
+    
+    const data = await response.json();
+    
+    if (data.status && data.data.status === 'success') {
+      // Mark gallery as paid
+      const gallery = galleries.find(g => g.id === galleryId);
+      if (gallery) {
+        gallery.isPaid = true;
+        gallery.isLocked = false;
+      }
+      res.json({ success: true });
+    } else {
+      res.json({ success: false });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Verification failed' });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`✅ Backend server running on port ${PORT}`);
