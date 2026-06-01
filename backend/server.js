@@ -6,10 +6,13 @@ const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
+const BASE_URL = 'https://mrk-visuals-api.onrender.com';
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'https://mrk-visuals.vercel.app'
+}));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
@@ -31,7 +34,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
   storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
+  limits: { fileSize: 50 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -74,11 +77,11 @@ app.post('/api/galleries', upload.array('photos', 100), (req, res) => {
 
     const photos = files.map(file => ({
       id: uuidv4(),
-      url: `http://localhost:5000/uploads/${file.filename}`,
+      url: `${BASE_URL}/uploads/${file.filename}`,
       filename: file.filename
     }));
 
-        const gallery = {
+    const gallery = {
       id: uuidv4(),
       title,
       slug,
@@ -108,7 +111,6 @@ app.delete('/api/galleries/:id', (req, res) => {
     return res.status(404).json({ error: 'Gallery not found' });
   }
   
-  // Delete photos from disk
   const gallery = galleries[index];
   gallery.photos.forEach(photo => {
     const filePath = path.join(__dirname, 'uploads', photo.filename);
@@ -120,6 +122,7 @@ app.delete('/api/galleries/:id', (req, res) => {
   galleries.splice(index, 1);
   res.json({ message: 'Gallery deleted' });
 });
+
 // Update gallery paid status
 app.patch('/api/galleries/:id', (req, res) => {
   const { id } = req.params;
@@ -132,7 +135,7 @@ app.patch('/api/galleries/:id', (req, res) => {
 
   if (isPaid !== undefined) {
     gallery.isPaid = isPaid;
-    gallery.isLocked = false; // Auto unlock when paid
+    gallery.isLocked = false;
   }
   if (isLocked !== undefined) {
     gallery.isLocked = isLocked;
@@ -142,5 +145,5 @@ app.patch('/api/galleries/:id', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ Backend server running on http://localhost:${PORT}`);
+  console.log(`✅ Backend server running on port ${PORT}`);
 });

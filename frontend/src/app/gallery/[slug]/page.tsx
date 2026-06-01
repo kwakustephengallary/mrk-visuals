@@ -16,7 +16,7 @@ export default function GalleryPage() {
   useEffect(() => {
     const fetchGallery = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/galleries/${slug}`);
+        const res = await fetch(`https://mrk-visuals-api.onrender.com/api/galleries/${slug}`);
         if (res.ok) {
           const data = await res.json();
           setGallery(data);

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://mrk-visuals-api.onrender.com/api';
 
 export default function AdminDashboard() {
   const router = useRouter();
