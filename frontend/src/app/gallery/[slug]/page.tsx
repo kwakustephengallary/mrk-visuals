@@ -26,10 +26,13 @@ export default function GalleryPage() {
   const [selectedPhotosForPayment, setSelectedPhotosForPayment] = useState<string[]>([]);
 
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://js.paystack.co/v2/inline.js';
-    script.async = true;
-    document.body.appendChild(script);
+    // Load Paystack script
+    if (!document.querySelector('script[src="https://js.paystack.co/v2/inline.js"]')) {
+      const script = document.createElement('script');
+      script.src = 'https://js.paystack.co/v2/inline.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
 
     fetchGallery();
   }, [slug]);
@@ -81,32 +84,42 @@ export default function GalleryPage() {
   const handlePaystackPayment = (amount: number, photoIds?: string[]) => {
     if (!gallery) return;
 
-    const handler = window.PaystackPop.setup({
-      key: 'pk_live_beaf994cee5d20a1c612a1571b22fa8df74e8536',
-      email: email || gallery.clientEmail || 'client@email.com',
-      amount: amount * 100,
-      currency: 'GHS',
-      channels: ['card', 'mobile_money'],
-      ref: `MRK_${Date.now()}`,
-      label: 'MR.K Visuals',
-      metadata: { gallery_id: gallery.id },
-      onSuccess: (transaction: any) => {
-        fetch(`https://mrk-visuals-api.onrender.com/api/verify-payment`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            reference: transaction.reference,
-            galleryId: gallery.id,
-            photoIds: photoIds || null,
-          }),
-        }).then(() => {
-          fetchGallery();
-          alert('Payment successful! 🎉');
-        });
-      },
-      onCancel: () => alert('Payment cancelled'),
-    });
-    handler.openIframe();
+    // Wait for Paystack to load
+    const openPaystack = () => {
+      if (typeof window.PaystackPop === 'undefined') {
+        setTimeout(openPaystack, 500);
+        return;
+      }
+
+      const handler = window.PaystackPop.setup({
+        key: 'pk_live_beaf994cee5d20a1c612a1571b22fa8df74e8536',
+        email: email || gallery.clientEmail || 'client@email.com',
+        amount: amount * 100,
+        currency: 'GHS',
+        channels: ['card', 'mobile_money'],
+        ref: `MRK_${Date.now()}`,
+        label: 'MR.K Visuals',
+        metadata: { gallery_id: gallery.id },
+        onSuccess: (transaction: any) => {
+          fetch(`https://mrk-visuals-api.onrender.com/api/verify-payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              reference: transaction.reference,
+              galleryId: gallery.id,
+              photoIds: photoIds || null,
+            }),
+          }).then(() => {
+            fetchGallery();
+            alert('Payment successful! 🎉');
+          });
+        },
+        onCancel: () => alert('Payment cancelled'),
+      });
+      handler.openIframe();
+    };
+
+    openPaystack();
   };
 
   const handleAccess = () => {
