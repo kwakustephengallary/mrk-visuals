@@ -233,7 +233,7 @@ export default function GalleryPage() {
             <p className="text-gray-500 mb-6">{gallery.photos.length} photos waiting</p>
 
             {/* Full Gallery Pricing */}
-            {gallery.pricingType === 'full' && (
+            {(gallery.pricingType === 'full' || !gallery.pricingType) && gallery.price > 0 && (
               <>
                 <p className="text-3xl font-bold mb-2">GHS {gallery.price}</p>
                 <button onClick={() => handlePaystackPayment(gallery.price)} className="w-full bg-green-600 text-white py-4 rounded-xl hover:bg-green-700 font-medium text-lg mb-4">
