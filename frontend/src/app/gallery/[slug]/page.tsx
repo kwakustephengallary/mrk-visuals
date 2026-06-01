@@ -82,7 +82,7 @@ export default function GalleryPage() {
     if (!gallery) return;
 
     const handler = window.PaystackPop.setup({
-      key: 'pk_test_0f5f46811b7bee1394ce38f14c4bd0f70574f70e',
+      key: 'pk_live_beaf994cee5d20a1c612a1571b22fa8df74e8536',
       email: email || gallery.clientEmail || 'client@email.com',
       amount: amount * 100,
       currency: 'GHS',
