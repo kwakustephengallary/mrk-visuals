@@ -11,69 +11,33 @@ export default function AdminLogin() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Simple demo login (we'll make this secure later)
     if (email === 'admin@mrkvisuals.com' && password === 'admin123') {
       localStorage.setItem('adminLoggedIn', 'true');
       router.push('/admin/dashboard');
     } else {
-      setError('Invalid email or password');
+      setError('Invalid credentials');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-light text-gray-900 mb-2">Admin Login</h1>
-          <p className="text-gray-500">MR.K Visuals Dashboard</p>
-        </div>
-
-        <form onSubmit={handleLogin} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-6">
-          {error && (
-            <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="admin@mrkvisuals.com"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="••••••••"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition-colors font-medium"
-          >
+    <div style={{ 
+      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+      background: '#f9f9f9', fontFamily: 'system-ui, sans-serif' 
+    }}>
+      <div style={{ background: '#fff', padding: 40, borderRadius: 12, width: 360, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+        <h1 style={{ fontSize: 20, fontWeight: 600, marginBottom: 5, textAlign: 'center' }}>MR.K Visuals</h1>
+        <p style={{ fontSize: 13, color: '#999', marginBottom: 30, textAlign: 'center' }}>Photographer Login</p>
+        
+        {error && <p style={{ background: '#fff0f0', color: '#d32f2f', padding: 10, borderRadius: 6, fontSize: 13, marginBottom: 15 }}>{error}</p>}
+        
+        <form onSubmit={handleLogin}>
+          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)}
+            style={{ width: '100%', padding: 12, border: '1px solid #ddd', borderRadius: 6, marginBottom: 12, fontSize: 14, boxSizing: 'border-box' }} />
+          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)}
+            style={{ width: '100%', padding: 12, border: '1px solid #ddd', borderRadius: 6, marginBottom: 20, fontSize: 14, boxSizing: 'border-box' }} />
+          <button type="submit" style={{ width: '100%', padding: 12, background: '#000', color: '#fff', border: 'none', borderRadius: 6, fontSize: 14, cursor: 'pointer', fontWeight: 500 }}>
             Sign In
           </button>
-
-          <p className="text-xs text-gray-400 text-center">
-            Demo: admin@mrkvisuals.com / admin123
-          </p>
         </form>
       </div>
     </div>
