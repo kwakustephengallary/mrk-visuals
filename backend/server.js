@@ -12,7 +12,7 @@ const BASE_URL = 'https://mrk-visuals-api.onrender.com';
 
 // Middleware
 app.use(cors({
-  origin: 'https://mrk-visuals.vercel.app'
+  origin: ['https://mrk-visuals.vercel.app', 'https://www.mrkvisualsgh.com', 'https://mrkvisualsgh.com']
 }));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
